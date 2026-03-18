@@ -27,15 +27,14 @@ for i in range(9):
             id_tweet[index].append(text)
         except KeyError:
             continue
-json.dump(id_tweet,open('./processed_data/id_tweet.json','w'))
+folder_path = 'Dataset/processed_data'
+processed_data_path = os.path.join(folder_path, "") 
 
-folder_path = 'processed_data'
-processed_data_path=os.path.join(folder_path)
-
-each_user_tweets=json.load(open(processed_data_path+"id_tweet.json",'r'))
+json.dump(id_tweet, open(os.path.join(folder_path, 'id_tweet.json'), 'w'))
+each_user_tweets = json.load(open(os.path.join(folder_path, 'id_tweet.json'), 'r'))
 
 # Load the model RoBERTa
-feature_extract=pipeline('feature-extraction',model='roberta-base',tokenizer='roberta-base',device=3,padding=True, truncation=True,max_length=50, add_special_tokens = True)
+feature_extract=pipeline('feature-extraction',model='roberta-base',tokenizer='roberta-base',device=0,padding=True, truncation=True,max_length=50, add_special_tokens = True)
 
 def Des_embbeding():
     print('Running description embedding')
@@ -52,7 +51,7 @@ def Des_embbeding():
                 else:
                     feature_tensor+=tensor
             feature_tensor/=feature.shape[1]
-            des_vec.append(feature_tensor)
+            des_vec.append(feature_tensor.cpu().detach())
             
     des_tensor=torch.stack(des_vec,0)
     torch.save(des_tensor,path)
@@ -90,7 +89,7 @@ def tweets_embedding():
             else:
                 total_each_person_tweets/=len(each_user_tweets[str(i)])
                 
-        tweets_list.append(total_each_person_tweets)
+        tweets_list.append(total_each_person_tweets.cpu().detach())
             
     tweet_tensor=torch.stack(tweets_list)
     torch.save(tweet_tensor,path)
