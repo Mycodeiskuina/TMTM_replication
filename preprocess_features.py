@@ -22,7 +22,7 @@ user_index_to_uid = list(user.id)
 uid_to_user_index = {x : i for i, x in enumerate(user_index_to_uid)}
 
 # Create the folder processed_data
-folder_path = 'processed_data'
+folder_path = './Dataset/processed_data'
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
 
