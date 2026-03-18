@@ -581,7 +581,7 @@ X_user = X_user.to_numpy()
 y = y.to_numpy()
 
 # Save the data to a .mat file
-savemat("user_data.mat", {"X": X_user, "y": y})
+savemat(os.path.join(folder_path, "user_data.mat"), {"X": X_user, "y": y})
 
 # Convert the data to PyTorch tensors
 features_tensor = torch.tensor(X_user.values, dtype=torch.float32)
