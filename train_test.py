@@ -141,59 +141,60 @@ if __name__ == "__main__":
 
     t = time.time()
 
-    # Hyperparameters configuration
-    hidden_dimension_options = [64, 128, 256]
-    dropout_options = [0.2, 0.3, 0.4]
-    epochs_options = [100, 150, 200]
-    lr_options = [1e-2, 1e-3, 1e-4]
+    # Hyperparameters configuration (Optimized values from the paper)
+    hidden_dimension_options = [64]
+    dropout_options = [0.2]
+    epochs_options = [200]
+    lr_options = [1e-2] # o 0.01
 
     # Best global configuration
     best_global_f1 = 0
     best_global_config = None
 
     # File to save the results
-    with open('results.txt', 'w') as f:
-        original_stdout = sys.stdout
-        sys.stdout = f
+    # with open('results.txt', 'w') as f:
+    # original_stdout = sys.stdout
+    # sys.stdout = f
+    # Eliminamos el "with open('results.txt', 'w')" para que imprima en la consola de Colab
 
-        # Iter over all the possible configurations
-        for hidden_dimension, dropout, epochs, lr in itertools.product(hidden_dimension_options, dropout_options, epochs_options, lr_options):
-            acc_list = []
-            precision_list = []
-            recall_list = []
-            f1_list = []
+    # Iter over all the possible configurations
+    for hidden_dimension, dropout, epochs, lr in itertools.product(hidden_dimension_options, dropout_options, epochs_options, lr_options):
+        acc_list = []
+        precision_list = []
+        recall_list = []
+        f1_list = []
 
-            # Actual configuration
-            current_hyperparams = {
-                'hidden_dimension': hidden_dimension, 
-                'dropout': dropout, 
-                'epochs': epochs, 
-                'lr': lr, 
-                'weight_decay': weight_decay
-            }
+        # Actual configuration
+        current_hyperparams = {
+            'hidden_dimension': hidden_dimension, 
+            'dropout': dropout, 
+            'epochs': epochs, 
+            'lr': lr, 
+            'weight_decay': weight_decay
+        }
 
-            for i, seed in enumerate(random_seed):
-                print('\nTraining {}th model'.format(i + 1))
-                acc, precision, recall, f1, f1_w = main(seed)
-                acc_list.append(acc * 100)
-                precision_list.append(precision * 100)
-                recall_list.append(recall * 100)
-                f1_list.append(f1 * 100)
+        for i, seed in enumerate(random_seed):
+            print('\nTraining {}th model'.format(i + 1))
+            acc, precision, recall, f1, f1_w = main(seed)
+            acc_list.append(acc * 100)
+            precision_list.append(precision * 100)
+            recall_list.append(recall * 100)
+            f1_list.append(f1 * 100)
 
-            print(f'Configuration: {current_hyperparams}')
-            print('Accuracy: {:.2f} ± {:.2f}'.format(np.mean(acc_list), np.std(acc_list)))
-            print('Precision: {:.2f} ± {:.2f}'.format(np.mean(precision_list), np.std(precision_list)))
-            print('Recall: {:.2f} ± {:.2f}'.format(np.mean(recall_list), np.std(recall_list)))
-            print('F1 Score: {:.2f} ± {:.2f}'.format(np.mean(f1_list), np.std(f1_list)))
+        print(f'Configuration: {current_hyperparams}')
+        print('Accuracy: {:.2f} ± {:.2f}'.format(np.mean(acc_list), np.std(acc_list)))
+        print('Precision: {:.2f} ± {:.2f}'.format(np.mean(precision_list), np.std(precision_list)))
+        print('Recall: {:.2f} ± {:.2f}'.format(np.mean(recall_list), np.std(recall_list)))
+        print('F1 Score: {:.2f} ± {:.2f}'.format(np.mean(f1_list), np.std(f1_list)))
 
-            max_f1 = np.mean(f1_list)
-            if max_f1 > best_global_f1:
-                best_global_f1 = max_f1
-                best_global_config = current_hyperparams
-                print(f"New best configuration: {best_global_config} with a f1 value of {best_global_f1}")
+        max_f1 = np.mean(f1_list)
+        if max_f1 > best_global_f1:
+            best_global_f1 = max_f1
+            best_global_config = current_hyperparams
+            print(f"New best configuration: {best_global_config} with a f1 value of {best_global_f1}")
 
-        print(f"New best global configuration: {best_global_config} with a f1 value of {best_global_f1:.2f}")
-        print('Total time:', time.time() - t)
+    print(f"New best global configuration: {best_global_config} with a f1 value of {best_global_f1:.2f}")
+    print('Total time:', time.time() - t)
 
         # Reset the standard output
-        sys.stdout = original_stdout
+        # sys.stdout = original_stdout
